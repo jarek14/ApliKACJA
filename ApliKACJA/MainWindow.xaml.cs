@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows;//biblioteki
 
 namespace ApliKACJA
 {
@@ -23,6 +15,29 @@ namespace ApliKACJA
         public MainWindow()
         {
             InitializeComponent();
+            Prepare();//wywołanie metody
+        }
+        public void Prepare() //metoda
+        {
+            address.Text = "https://jsonplaceholder.typicode.com/todos/1"; //ustawienie właściwości
+        }
+        private void send_Click(object sender, RoutedEventArgs e)
+        {
+            string responseString; //tekst odpowiedzi
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(address.Text);
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            {
+                StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+                responseString = reader.ReadToEnd();                
+            }
+            Deserialize(responseString);
+        }
+        public Json Deserialize(string json)
+        {
+            Json result = JsonConvert.DeserializeObject<Json>(json);
+            return result;
         }
     }
+
 }
